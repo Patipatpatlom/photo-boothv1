@@ -24,6 +24,7 @@ export default function Home() {
   // Capture sequence state
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [countdownNumber, setCountdownNumber] = useState<number | null>(null);
+  const templateScrollRef = useRef<HTMLDivElement>(null);
 
   // Initialize application and load resources
   useEffect(() => {
@@ -397,11 +398,43 @@ export default function Home() {
                 {/* 2. SELECT PHOTO TEMPLATE / เลือกรูปแบบรูปภาพ */}
                 <div className="flex flex-col gap-3">
                   <span className="font-mono text-[9px] tracking-widest text-neutral-500 uppercase flex justify-between items-center border-b border-white/5 pb-1">
-                    <span>SELECT TEMPLATE</span>
+                    <span className="flex items-center gap-2">
+                      <span>SELECT TEMPLATE</span>
+                      {/* Nav buttons for desktop */}
+                      <span className="hidden md:flex items-center gap-1.5 ml-2 border-l border-white/10 pl-2">
+                        <button
+                          onClick={() => {
+                            audio.playClick();
+                            templateScrollRef.current?.scrollBy({ left: -150, behavior: 'smooth' });
+                          }}
+                          className="hover:text-neon-cyan transition-colors cursor-pointer p-0.5 text-[8px]"
+                          title="Scroll Left"
+                        >
+                          ◀
+                        </button>
+                        <button
+                          onClick={() => {
+                            audio.playClick();
+                            templateScrollRef.current?.scrollBy({ left: 150, behavior: 'smooth' });
+                          }}
+                          className="hover:text-neon-cyan transition-colors cursor-pointer p-0.5 text-[8px]"
+                          title="Scroll Right"
+                        >
+                          ▶
+                        </button>
+                      </span>
+                    </span>
                     <span className="text-neon-cyan">เลือกรูปแบบ</span>
                   </span>
 
-                  <div className="flex gap-2 pb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent snap-x w-full">
+                  <div
+                    ref={templateScrollRef}
+                    onWheel={(e) => {
+                      if (e.deltaY !== 0) {
+                        e.currentTarget.scrollLeft += e.deltaY;
+                      }
+                    }}
+                    className="flex gap-2 pb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent snap-x w-full">
                     {PHOTO_LAYOUTS.map((layout) => (
                       <button
                         key={layout.id}
